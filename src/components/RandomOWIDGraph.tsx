@@ -32,7 +32,7 @@ export function RandomOWIDGraph() {
           onClick={() => setRandomGraphString(getRandomString())}
           variant="outlined"
         >
-          Randomize!
+          New random graph
         </Button>
       </Box>
       {randomGraphString !== "" ? (

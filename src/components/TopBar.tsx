@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     display: "flex",
     borderBottom: `2px solid ${theme.palette.divider}`,
+    marginBottom: theme.spacing(4),
   },
   toolbar: {
     display: "flex",
