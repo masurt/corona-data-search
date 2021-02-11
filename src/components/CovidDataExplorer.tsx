@@ -220,6 +220,21 @@ export function CovidDataExplorer() {
         </Box>
       </Box>
       <Line data={plotData} type={null} />
+
+      <Typography>
+        All data due to{" "}
+        <Link href="https://www.ourworldindata.org">Our World in Data</Link>.
+        Covid data taken from the{" "}
+        <Link href="https://www.github.com/owid/covid-19-data/tree/master/public/data">
+          Our World in Data Covid-19 data github repository
+        </Link>
+        . <br />
+        Testing data from Hasell, J., Mathieu, E., Beltekian, D. <i>et al.</i> A
+        cross-country database of COVID-19 testing. Sci Data 7, 345 (2020).{" "}
+        <Link href="https://doi.org/10.1038/s41597-020-00688-8">
+          https://doi.org/10.1038/s41597-020-00688-8
+        </Link>
+      </Typography>
     </Container>
   );
 }

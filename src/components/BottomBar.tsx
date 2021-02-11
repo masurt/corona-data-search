@@ -49,13 +49,9 @@ export function BottomBar() {
         <Grid container spacing={4} justify="space-evenly">
           <Grid item xs={6} sm={3}>
             <Typography>
-              All data due to{" "}
+              Credit for all data due to{" "}
               <Link href="https://www.ourworldindata.org">
                 Our World in Data
-              </Link>
-              . Covid Data taken from the{" "}
-              <Link href="https://www.github.com/owid/covid-19-data/tree/master/public/data">
-                Our World in Data covid-19-data github repository
               </Link>
               .
             </Typography>
