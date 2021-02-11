@@ -1,4 +1,4 @@
-import { Box, Button } from "@material-ui/core";
+import { Box, Button, Link, Typography } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 
 import { grapherLinkStrings } from "./GrapherLinks";
@@ -38,7 +38,12 @@ export function RandomOWIDGraph() {
       {randomGraphString !== "" ? (
         <div>
           <Box m={2}>
-            <h2>{`Showing "${replaceAll(randomGraphString, "-", " ")}"`}</h2>
+            <Typography>
+              {"For further info visit: "}
+              <Link href={grapherBaseUrl + randomGraphString}>
+                {grapherBaseUrl + randomGraphString}
+              </Link>
+            </Typography>
           </Box>
           <iframe
             src={grapherBaseUrl + randomGraphString}
