@@ -29,6 +29,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {"Copyright © Exploring OWID by Tilman Masur "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
 export function BottomBar() {
   const classes = useStyles();
 
@@ -49,9 +59,12 @@ export function BottomBar() {
               </Link>
               .
             </Typography>
-            <h3>Be water, my friend!</h3>
           </Grid>
         </Grid>
+        <Box mt={5}>
+          <Copyright />
+          <h3>Be water, my friend!</h3>
+        </Box>
       </Box>
     </>
   );
