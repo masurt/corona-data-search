@@ -86,7 +86,7 @@ var randomColor = function () {
   return "rgb(" + r + "," + g + "," + b + ")";
 };
 
-export function CoronaSearchBar() {
+export function CovidDataExplorer() {
   // initially loaded data
   const [data, setData] = useState<Array<any>>([]);
   const [locations, setLocations] = useState<Array<string>>([]);

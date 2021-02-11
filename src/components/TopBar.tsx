@@ -66,7 +66,7 @@ export function TopBar() {
           </Typography>
           <Box style={{ display: "flex", flexDirection: "row" }}>
             <Router>
-              <NavLink to="covid-search" className={classes.link}>
+              <NavLink to="covid-explorer" className={classes.link}>
                 <Button>Covid Data Explorer</Button>
               </NavLink>
               <NavLink to="random-graph" className={classes.link}>

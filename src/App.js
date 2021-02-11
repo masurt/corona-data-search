@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 
-import {CoronaSearchBar} from "./components/SearchBar.tsx"
+import {CovidDataExplorer} from "./components/CovidDataExplorer.tsx"
 import {RandomOWIDGraph} from "./components/RandomOWIDGraph.tsx"
 import {TopBar} from "./components/TopBar"
 import {BottomBar} from "./components/BottomBar"
@@ -19,8 +19,8 @@ function App() {
       <TopBar/>
       <Router>
         <Switch>
-          <Route path="/covid-search">
-            <CoronaSearchBar/>
+          <Route path="/covid-explorer">
+            <CovidDataExplorer/>
           </Route>
           <Route path="/random-graph">
             <RandomOWIDGraph/>
