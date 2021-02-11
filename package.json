@@ -1,6 +1,6 @@
 {
-  "name": "corona_data_search",
-  "homepage": "https://masurt.github.io/corona-data-search",
+  "name": "exploring-owid",
+  "homepage": "https://masurt.github.io/exploring-owid",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
