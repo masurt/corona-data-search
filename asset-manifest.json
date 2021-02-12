@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/corona-data-search/static/css/main.8c8b27cf.chunk.css",
-    "main.js": "/corona-data-search/static/js/main.134fbcce.chunk.js",
-    "main.js.map": "/corona-data-search/static/js/main.134fbcce.chunk.js.map",
-    "runtime-main.js": "/corona-data-search/static/js/runtime-main.8427e368.js",
-    "runtime-main.js.map": "/corona-data-search/static/js/runtime-main.8427e368.js.map",
-    "static/js/2.6636aa0c.chunk.js": "/corona-data-search/static/js/2.6636aa0c.chunk.js",
-    "static/js/2.6636aa0c.chunk.js.map": "/corona-data-search/static/js/2.6636aa0c.chunk.js.map",
-    "static/js/3.dc1ac864.chunk.js": "/corona-data-search/static/js/3.dc1ac864.chunk.js",
-    "static/js/3.dc1ac864.chunk.js.map": "/corona-data-search/static/js/3.dc1ac864.chunk.js.map",
-    "index.html": "/corona-data-search/index.html",
-    "static/css/main.8c8b27cf.chunk.css.map": "/corona-data-search/static/css/main.8c8b27cf.chunk.css.map",
-    "static/js/2.6636aa0c.chunk.js.LICENSE.txt": "/corona-data-search/static/js/2.6636aa0c.chunk.js.LICENSE.txt"
+    "main.css": "/exploring-owid/static/css/main.8c8b27cf.chunk.css",
+    "main.js": "/exploring-owid/static/js/main.300da620.chunk.js",
+    "main.js.map": "/exploring-owid/static/js/main.300da620.chunk.js.map",
+    "runtime-main.js": "/exploring-owid/static/js/runtime-main.6c6d558c.js",
+    "runtime-main.js.map": "/exploring-owid/static/js/runtime-main.6c6d558c.js.map",
+    "static/js/2.a04f78a0.chunk.js": "/exploring-owid/static/js/2.a04f78a0.chunk.js",
+    "static/js/2.a04f78a0.chunk.js.map": "/exploring-owid/static/js/2.a04f78a0.chunk.js.map",
+    "static/js/3.4ee9b356.chunk.js": "/exploring-owid/static/js/3.4ee9b356.chunk.js",
+    "static/js/3.4ee9b356.chunk.js.map": "/exploring-owid/static/js/3.4ee9b356.chunk.js.map",
+    "index.html": "/exploring-owid/index.html",
+    "static/css/main.8c8b27cf.chunk.css.map": "/exploring-owid/static/css/main.8c8b27cf.chunk.css.map",
+    "static/js/2.a04f78a0.chunk.js.LICENSE.txt": "/exploring-owid/static/js/2.a04f78a0.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.8427e368.js",
-    "static/js/2.6636aa0c.chunk.js",
+    "static/js/runtime-main.6c6d558c.js",
+    "static/js/2.a04f78a0.chunk.js",
     "static/css/main.8c8b27cf.chunk.css",
-    "static/js/main.134fbcce.chunk.js"
+    "static/js/main.300da620.chunk.js"
   ]
 }
