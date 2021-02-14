@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/exploring-owid/static/css/main.8c8b27cf.chunk.css",
-    "main.js": "/exploring-owid/static/js/main.be11b3a1.chunk.js",
-    "main.js.map": "/exploring-owid/static/js/main.be11b3a1.chunk.js.map",
+    "main.js": "/exploring-owid/static/js/main.f19e4a93.chunk.js",
+    "main.js.map": "/exploring-owid/static/js/main.f19e4a93.chunk.js.map",
     "runtime-main.js": "/exploring-owid/static/js/runtime-main.8fb90211.js",
     "runtime-main.js.map": "/exploring-owid/static/js/runtime-main.8fb90211.js.map",
-    "static/js/2.20682b00.chunk.js": "/exploring-owid/static/js/2.20682b00.chunk.js",
-    "static/js/2.20682b00.chunk.js.map": "/exploring-owid/static/js/2.20682b00.chunk.js.map",
+    "static/js/2.6022d1d6.chunk.js": "/exploring-owid/static/js/2.6022d1d6.chunk.js",
+    "static/js/2.6022d1d6.chunk.js.map": "/exploring-owid/static/js/2.6022d1d6.chunk.js.map",
     "static/js/3.b195b231.chunk.js": "/exploring-owid/static/js/3.b195b231.chunk.js",
     "static/js/3.b195b231.chunk.js.map": "/exploring-owid/static/js/3.b195b231.chunk.js.map",
     "index.html": "/exploring-owid/index.html",
     "static/css/main.8c8b27cf.chunk.css.map": "/exploring-owid/static/css/main.8c8b27cf.chunk.css.map",
-    "static/js/2.20682b00.chunk.js.LICENSE.txt": "/exploring-owid/static/js/2.20682b00.chunk.js.LICENSE.txt"
+    "static/js/2.6022d1d6.chunk.js.LICENSE.txt": "/exploring-owid/static/js/2.6022d1d6.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8fb90211.js",
-    "static/js/2.20682b00.chunk.js",
+    "static/js/2.6022d1d6.chunk.js",
     "static/css/main.8c8b27cf.chunk.css",
-    "static/js/main.be11b3a1.chunk.js"
+    "static/js/main.f19e4a93.chunk.js"
   ]
 }
