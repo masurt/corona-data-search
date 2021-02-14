@@ -84,8 +84,8 @@ export const normalizePlotDatasets = (
 };
 
 const randomColor = function () {
-  var r = Math.floor(Math.random() * 200);
-  var g = Math.floor(Math.random() * 200);
-  var b = Math.floor(Math.random() * 200);
+  var r = Math.floor(Math.random() * 230);
+  var g = Math.floor(Math.random() * 230);
+  var b = Math.floor(Math.random() * 230);
   return "rgb(" + r + "," + g + "," + b + ")";
 };
