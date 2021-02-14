@@ -142,20 +142,3 @@ export const getLocations = (data: any) => {
   }
   return locations;
 };
-
-export const getColumns = (data: any) => {
-  const columns = Object.keys(data[0]);
-  removeItemsOnce(columns, ["iso_code", "continent", "location", "date"]);
-
-  return columns;
-};
-
-function removeItemsOnce(arr: any, values: any) {
-  for (const value of values) {
-    var index = arr.indexOf(value);
-    if (index > -1) {
-      arr.splice(index, 1);
-    }
-  }
-  return arr;
-}
