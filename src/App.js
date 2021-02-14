@@ -7,10 +7,11 @@ import {
 } from "react-router-dom";
 
 
-import {CovidDataExplorer} from "./components/CovidDataExplorer.tsx"
-import {RandomOWIDGraph} from "./components/RandomOWIDGraph.tsx"
+import {HomePage} from "./components/HomePage"
 import {TopBar} from "./components/TopBar"
 import {BottomBar} from "./components/BottomBar"
+import {CovidDataExplorer} from "./components/CovidDataExplorer.tsx"
+import {RandomOWIDGraph} from "./components/RandomOWIDGraph.tsx"
 
 function App() {
 
@@ -19,6 +20,9 @@ function App() {
       <TopBar/>
       <Router>
         <Switch>
+          <Route exact path="/">
+            <HomePage/>
+          </Route>
           <Route path="/covid-explorer">
             <CovidDataExplorer/>
           </Route>
