@@ -1,4 +1,3 @@
-import csvParse from "csv-parse";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -13,91 +12,19 @@ import {
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Line } from "@reactchartjs/react-chart.js";
 
-import { getSearchedData, getLocations, getColumns } from "./DataLoader";
+import {
+  loadCovidCsv,
+  getSearchedData,
+  getLocations,
+} from "./CovidDataHelpers";
+import { getPlotData } from "./PlotHelpers";
 
-const dataFileUrl = "https://covid.ourworldindata.org/data/owid-covid-data.csv";
-
-const getUnifiedLabelsFromDatasets = (selectedDatasets: any) => {
-  // unify labels from all datasets
-  var unifiedLabels: string[] = [];
-  for (const dataset of selectedDatasets) {
-    unifiedLabels = unifiedLabels.concat(dataset.labels);
-  }
-  unifiedLabels = Array.from(new Set(unifiedLabels));
-  unifiedLabels.sort();
-  return unifiedLabels;
+const autocompleteProps = {
+  debug: true,
+  freeSolo: true,
+  filterSelectedOptions: true,
+  style: { width: 500 },
 };
-
-const getPlotDatasets = (
-  selectedDatasets: { label: string; labels: any; data: any }[],
-  unifiedLabels: string[],
-  plotRelative: boolean
-) => {
-  const plotDatasets = [];
-  for (const dataset of selectedDatasets) {
-    const plotDataset: {
-      label: string;
-      data: Array<any>;
-      borderColor: string;
-      fill: boolean;
-    } = {
-      label: dataset.label,
-      data: [],
-      borderColor: randomColor(),
-      fill: false,
-    };
-
-    for (const label of unifiedLabels) {
-      const labelIndex: number = dataset.labels.indexOf(label);
-      if (labelIndex > -1) {
-        plotDataset.data.push(dataset.data[labelIndex]);
-      } else {
-        plotDataset.data.push(0);
-      }
-    }
-
-    plotDatasets.push(plotDataset);
-  }
-  return plotDatasets;
-};
-
-const normalizePlotDatasets = (
-  plotDatasets: Array<{
-    label: string;
-    data: Array<any>;
-    borderColor: string;
-    fill: boolean;
-  }>
-) => {
-  for (const plotDataset of plotDatasets) {
-    const max: number = Math.max(...plotDataset.data);
-    if (max > 0) {
-      plotDataset.data = plotDataset.data.map((datum) => datum / max);
-    }
-  }
-  return plotDatasets;
-};
-
-var randomColor = function () {
-  var r = Math.floor(Math.random() * 200);
-  var g = Math.floor(Math.random() * 200);
-  var b = Math.floor(Math.random() * 200);
-  return "rgb(" + r + "," + g + "," + b + ")";
-};
-
-function maskItems(arr: any, values: any) {
-  const maskedArr: Array<string | null> = [];
-
-  for (const val of arr) {
-    var index = values.indexOf(val);
-    if (index == -1) {
-      maskedArr.push(val);
-    } else {
-      maskedArr.push(null);
-    }
-  }
-  return maskedArr;
-}
 
 export function CovidDataExplorer() {
   // initially loaded data
@@ -105,12 +32,11 @@ export function CovidDataExplorer() {
   const [locations, setLocations] = useState<Array<string>>([]);
   const [columns, setColumns] = useState<Array<string>>([]);
 
-  // search stat
+  // search state
+  // array of selected columns
   const [columnValue, setColumnValue] = useState([]);
-  const [columnInputValue, setColumnInputValue] = useState("");
   const [locationValue, setLocationValue] = useState([]);
   const [locationLabel, setLocationLabel] = useState("Locations loading ...");
-  const [locationInputValue, setLocationInputValue] = useState("");
 
   const [selectedDatasets, setSelectedData] = useState<
     Array<{ label: string; labels: any; data: any }>
@@ -130,92 +56,26 @@ export function CovidDataExplorer() {
       timeoutIdsToCancel.push(newId);
     };
 
-    fetch(dataFileUrl, { signal })
-      .then((resp: Response) => resp.text())
-      .then(extractColumnsFromCsvString)
-      .then(extractCountriesAndParseCSVFactory(pushTimeoutIdsToCancel))
-      .catch((err) => console.log(err));
-
-    return () => {
+    const cancelTimeoutsAndRequest = () => {
       controller.abort();
       for (const timeoutId of timeoutIdsToCancel) {
         clearTimeout(timeoutId);
       }
       setData([]);
     };
+
+    loadCovidCsv(
+      signal,
+      pushTimeoutIdsToCancel,
+      setData,
+      setColumns,
+      setLocationLabel
+    );
+
+    return cancelTimeoutsAndRequest;
   }, []);
 
-  const extractColumnsFromCsvString = (csv: string) => {
-    const endOfFirstLineIndex: number = csv.indexOf("\n");
-    const allColumns: Array<string> = csv
-      .slice(0, endOfFirstLineIndex)
-      .split(",");
-    const maskedColumns: Array<string | null> = maskItems(allColumns, [
-      "iso_code",
-      "continent",
-      "location",
-      "date",
-    ]);
-    const columns: any = maskedColumns.filter((col) => col);
-    setColumns(columns);
-    return { csv, allColumns };
-  };
-
-  const extractCountriesAndParseCSVFactory = (pushTimeoutIdsToCancel: any) => {
-    const extractCountriesAndParseCSV = ({
-      csv,
-      allColumns,
-    }: {
-      csv: string;
-      allColumns: Array<string | null>;
-    }) => {
-      const csvLineArray = csv.split("\n").slice(1, csv.length - 1);
-      const tempData: Array<any> = [];
-      // Create the parser
-      const parser = csvParse({
-        delimiter: ",",
-        columns: allColumns,
-      });
-      // execute on new data in stream
-      parser.on("readable", function () {
-        let record;
-        while ((record = parser.read())) {
-          tempData.push(record);
-        }
-      });
-      // Catch any error
-      parser.on("error", function (err) {
-        console.error("err1: ", err.message);
-      });
-      // save in state when stream ended
-      parser.on("end", function () {
-        setData(tempData);
-        setLocationLabel("Location");
-      });
-
-      // Write csv to the stream in chunks of lines
-      const chunkSize: number = 1000;
-      for (var i = 0; i < csvLineArray.length; i += chunkSize) {
-        const newlineIfMoreData =
-          i < csvLineArray.length - chunkSize ? "\n" : "";
-        const writeLine =
-          csvLineArray
-            .slice(i, Math.min(csvLineArray.length, i + chunkSize))
-            .join("\n") + newlineIfMoreData;
-        const timeoutId = setTimeout(() => {
-          parser.write(writeLine);
-        });
-        pushTimeoutIdsToCancel(timeoutId);
-      }
-
-      // Close the readable stream
-      setTimeout(() => parser.end());
-    };
-    return extractCountriesAndParseCSV;
-  };
-
-  /* ------------------ behaviour ---------------------- */
-  // value change handler
+  // search value change handler (for both fields)
   const onChangeHandlerFactor = (
     value: Array<string>,
     setValue: Dispatch<SetStateAction<never[]>>
@@ -227,33 +87,19 @@ export function CovidDataExplorer() {
   };
 
   useEffect(() => {
+    // set location options
     const locations = getLocations(data);
     setLocations(locations);
   }, [data]);
 
   useEffect(() => {
+    // get data corresponding to selected column and location arrays
     setSelectedData(getSearchedData(data, columnValue, locationValue));
-  }, [columnValue, locationValue]);
+  }, [data, columnValue, locationValue]);
 
   // update plot data
   useEffect(() => {
-    const unifiedLabels = getUnifiedLabelsFromDatasets(selectedDatasets);
-
-    // fill all datasets with zeros for dates where no data exists
-    var plotDatasets = getPlotDatasets(
-      selectedDatasets,
-      unifiedLabels,
-      plotRelative
-    );
-
-    const plotData = {
-      labels: unifiedLabels,
-      datasets: plotDatasets,
-    };
-
-    if (plotRelative) {
-      plotData.datasets = normalizePlotDatasets(plotData.datasets);
-    }
+    const plotData = getPlotData(selectedDatasets, plotRelative);
 
     setPlotData(plotData);
   }, [selectedDatasets, plotRelative]);
@@ -274,15 +120,10 @@ export function CovidDataExplorer() {
         <Autocomplete
           multiple
           id="searchColumn"
-          inputValue={columnInputValue}
-          onInputChange={(event, newValue) => setColumnInputValue(newValue)}
           value={columnValue}
           onChange={onChangeHandlerFactor(columnValue, setColumnValue)}
           options={columns}
-          debug
-          freeSolo
-          filterSelectedOptions
-          style={{ width: 300 }}
+          {...autocompleteProps}
           renderInput={(params) => (
             <TextField {...params} label="Metric" variant="outlined" />
           )}
@@ -295,18 +136,13 @@ export function CovidDataExplorer() {
         <Autocomplete
           multiple
           id="searchCountry"
-          inputValue={locationInputValue}
-          onInputChange={(event, newValue) => setLocationInputValue(newValue)}
           value={locationValue}
           onChange={onChangeHandlerFactor(locationValue, setLocationValue)}
           options={locations}
-          filterSelectedOptions
-          style={{ width: 300 }}
           renderInput={(params) => (
             <TextField {...params} label={locationLabel} variant="outlined" />
           )}
-          debug
-          freeSolo
+          {...autocompleteProps}
         />
         <Box pt={3}>
           <FormControlLabel
