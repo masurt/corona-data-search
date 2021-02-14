@@ -1,5 +1,4 @@
-import csv from "csvtojson";
-import request from "request";
+import csvParse from "csv-parse";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -86,6 +85,20 @@ var randomColor = function () {
   return "rgb(" + r + "," + g + "," + b + ")";
 };
 
+function maskItems(arr: any, values: any) {
+  const maskedArr: Array<string | null> = [];
+
+  for (const val of arr) {
+    var index = values.indexOf(val);
+    if (index == -1) {
+      maskedArr.push(val);
+    } else {
+      maskedArr.push(null);
+    }
+  }
+  return maskedArr;
+}
+
 export function CovidDataExplorer() {
   // initially loaded data
   const [data, setData] = useState<Array<any>>([]);
@@ -96,6 +109,7 @@ export function CovidDataExplorer() {
   const [columnValue, setColumnValue] = useState([]);
   const [columnInputValue, setColumnInputValue] = useState("");
   const [locationValue, setLocationValue] = useState([]);
+  const [locationLabel, setLocationLabel] = useState("Locations loading ...");
   const [locationInputValue, setLocationInputValue] = useState("");
 
   const [selectedDatasets, setSelectedData] = useState<
@@ -108,37 +122,97 @@ export function CovidDataExplorer() {
 
   // initial data load
   useEffect(() => {
-    const data: Array<any> = [];
+    const controller = new AbortController();
+    const { signal } = controller;
 
-    const onError = (err: any) => {
-      console.log("error: ", err);
+    const timeoutIdsToCancel: Array<any> = [];
+    const pushTimeoutIdsToCancel = (newId: any) => {
+      timeoutIdsToCancel.push(newId);
     };
 
-    const onComplete = () => {
-      setData(data);
-      setLocations(getLocations(data));
-      setColumns(getColumns(data));
-      //return () => () => setData([])
-    };
+    fetch(dataFileUrl, { signal })
+      .then((resp: Response) => resp.text())
+      .then(extractColumnsFromCsvString)
+      .then(extractCountriesAndParseCSVFactory(pushTimeoutIdsToCancel))
+      .catch((err) => console.log(err));
 
-    csv()
-      .fromStream(request.get(dataFileUrl))
-      .subscribe(
-        (json) => {
-          return new Promise((resolve, reject) => {
-            data.push(json);
-            if (data.length % 10000 === 0) {
-              console.time("hi");
-              console.log(data.length);
-              console.timeEnd("hi");
-            }
-            resolve();
-          });
-        },
-        onError,
-        onComplete
-      );
+    return () => {
+      controller.abort();
+      for (const timeoutId of timeoutIdsToCancel) {
+        clearTimeout(timeoutId);
+      }
+      setData([]);
+    };
   }, []);
+
+  const extractColumnsFromCsvString = (csv: string) => {
+    const endOfFirstLineIndex: number = csv.indexOf("\n");
+    const allColumns: Array<string> = csv
+      .slice(0, endOfFirstLineIndex)
+      .split(",");
+    const maskedColumns: Array<string | null> = maskItems(allColumns, [
+      "iso_code",
+      "continent",
+      "location",
+      "date",
+    ]);
+    const columns: any = maskedColumns.filter((col) => col);
+    setColumns(columns);
+    return { csv, allColumns };
+  };
+
+  const extractCountriesAndParseCSVFactory = (pushTimeoutIdsToCancel: any) => {
+    const extractCountriesAndParseCSV = ({
+      csv,
+      allColumns,
+    }: {
+      csv: string;
+      allColumns: Array<string | null>;
+    }) => {
+      const csvLineArray = csv.split("\n").slice(1, csv.length - 1);
+      const tempData: Array<any> = [];
+      // Create the parser
+      const parser = csvParse({
+        delimiter: ",",
+        columns: allColumns,
+      });
+      // execute on new data in stream
+      parser.on("readable", function () {
+        let record;
+        while ((record = parser.read())) {
+          tempData.push(record);
+        }
+      });
+      // Catch any error
+      parser.on("error", function (err) {
+        console.error("err1: ", err.message);
+      });
+      // save in state when stream ended
+      parser.on("end", function () {
+        setData(tempData);
+        setLocationLabel("Location");
+      });
+
+      // Write csv to the stream in chunks of lines
+      const chunkSize: number = 1000;
+      for (var i = 0; i < csvLineArray.length; i += chunkSize) {
+        const newlineIfMoreData =
+          i < csvLineArray.length - chunkSize ? "\n" : "";
+        const writeLine =
+          csvLineArray
+            .slice(i, Math.min(csvLineArray.length, i + chunkSize))
+            .join("\n") + newlineIfMoreData;
+        const timeoutId = setTimeout(() => {
+          parser.write(writeLine);
+        });
+        pushTimeoutIdsToCancel(timeoutId);
+      }
+
+      // Close the readable stream
+      setTimeout(() => parser.end());
+    };
+    return extractCountriesAndParseCSV;
+  };
 
   /* ------------------ behaviour ---------------------- */
   // value change handler
@@ -153,8 +227,13 @@ export function CovidDataExplorer() {
   };
 
   useEffect(() => {
+    const locations = getLocations(data);
+    setLocations(locations);
+  }, [data]);
+
+  useEffect(() => {
     setSelectedData(getSearchedData(data, columnValue, locationValue));
-  }, [data, columnValue, locationValue]);
+  }, [columnValue, locationValue]);
 
   // update plot data
   useEffect(() => {
@@ -224,7 +303,7 @@ export function CovidDataExplorer() {
           filterSelectedOptions
           style={{ width: 300 }}
           renderInput={(params) => (
-            <TextField {...params} label="Country" variant="outlined" />
+            <TextField {...params} label={locationLabel} variant="outlined" />
           )}
           debug
           freeSolo
