@@ -10,14 +10,6 @@ const getRandomString = () => {
   return grapherLinkStrings[randIndex];
 };
 
-const replaceAll = (s: string, r1: string, r2: string) => {
-  var newString = s;
-  while (newString.replace(r1, r2) !== newString) {
-    newString = newString.replace(r1, r2);
-  }
-  return newString;
-};
-
 export function RandomOWIDGraph() {
   const [randomGraphString, setRandomGraphString] = useState<string>("");
 
@@ -46,6 +38,7 @@ export function RandomOWIDGraph() {
             </Typography>
           </Box>
           <iframe
+            title={randomGraphString}
             src={grapherBaseUrl + randomGraphString}
             loading="lazy"
             style={{ width: "100%", height: "600px", border: "600px none" }}
