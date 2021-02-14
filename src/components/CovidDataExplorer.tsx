@@ -1,5 +1,5 @@
-import * as d3 from "d3";
-
+import csv from "csvtojson";
+import request from "request";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -108,13 +108,36 @@ export function CovidDataExplorer() {
 
   // initial data load
   useEffect(() => {
-    d3.csv(dataFileUrl)
-      .then((data) => {
-        setData(data);
-        setLocations(getLocations(data));
-        setColumns(getColumns(data));
-      })
-      .then(() => () => setData([]));
+    const data: Array<any> = [];
+
+    const onError = (err: any) => {
+      console.log("error: ", err);
+    };
+
+    const onComplete = () => {
+      setData(data);
+      setLocations(getLocations(data));
+      setColumns(getColumns(data));
+      //return () => () => setData([])
+    };
+
+    csv()
+      .fromStream(request.get(dataFileUrl))
+      .subscribe(
+        (json) => {
+          return new Promise((resolve, reject) => {
+            data.push(json);
+            if (data.length % 10000 === 0) {
+              console.time("hi");
+              console.log(data.length);
+              console.timeEnd("hi");
+            }
+            resolve();
+          });
+        },
+        onError,
+        onComplete
+      );
   }, []);
 
   /* ------------------ behaviour ---------------------- */
